@@ -16,7 +16,7 @@ public class ControlNotas extends JFrame {
    private DefaultTableModel estudiantesModel, materiasModel, gruposModel, notasModel;
    private JTextField estudianteField, materiaField,grupoField;
    private JButton addEstudianteButton, addMateriaButton, addGrupoButton, addNotaButton;
-   private JComboBox<String> estudianteCombo,grupoCombo;
+   private JComboBox<String> estudianteCombo,grupoCombo,materiaCombo;
    
    public ControlNotas(){
      setTitle("Sistema de control de Notas ");
@@ -42,6 +42,22 @@ public class ControlNotas extends JFrame {
        inputPanel.add(estudianteField);
        inputPanel.add(addEstudianteButton);
        
+       // Agregar botón para eliminar elementos
+    JButton eliminarButton = new JButton("Eliminar");
+    eliminarButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int filaSeleccionada = estudiantesTable.getSelectedRow();
+            if (filaSeleccionada != -1) {
+                estudiantesModel.removeRow(filaSeleccionada);
+                estudiantesModel.fireTableDataChanged();
+            } else {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar una fila para eliminar.");
+            }
+        }
+    });
+    inputPanel.add(eliminarButton);
+
        String[] columnNames = { "Nombre", "Eliminar" };
        estudiantesModel = new DefaultTableModel(columnNames, 0);
        estudiantesTable =  new JTable(estudiantesModel);
@@ -50,7 +66,7 @@ public class ControlNotas extends JFrame {
            agregarElemento(estudianteField,estudiantesModel);
            actualizarComboBox(estudiantesModel,estudianteCombo);
        });
-           
+                 
        panel.add(inputPanel,BorderLayout.NORTH);
        panel.add(new JScrollPane(estudiantesTable),BorderLayout.CENTER);
        return panel;
@@ -67,10 +83,27 @@ public class ControlNotas extends JFrame {
        inputPanel.add(materiaField);
        inputPanel.add(addMateriaButton);
        
+           // Agregar botón para eliminar elementos
+    JButton eliminarButton = new JButton("Eliminar");
+    eliminarButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int filaSeleccionada = materiasTable.getSelectedRow();
+            if (filaSeleccionada != -1) {
+                materiasModel.removeRow(filaSeleccionada);
+                materiasModel.fireTableDataChanged();
+            } else {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar una fila para eliminar.");
+            }
+        }
+    });
+    inputPanel.add(eliminarButton);
+       
        String[] columnNames = {"Materia", "Eliminar"};
        materiasModel = new  DefaultTableModel(columnNames,0);
        materiasTable =new JTable (materiasModel);
        
+     
        addMateriaButton.addActionListener(e -> agregarElemento(materiaField,materiasModel));
        panel.add(inputPanel,BorderLayout.NORTH);
        panel.add(new JScrollPane(materiasTable),BorderLayout.CENTER);
@@ -86,9 +119,26 @@ public class ControlNotas extends JFrame {
        inputPanel.add(grupoField);
        inputPanel.add(addGrupoButton);
        
+       // Agregar botón para eliminar elementos
+    JButton eliminarButton = new JButton("Eliminar");
+    eliminarButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int filaSeleccionada = gruposTable.getSelectedRow();
+            if (filaSeleccionada != -1) {
+                gruposModel.removeRow(filaSeleccionada);
+                gruposModel.fireTableDataChanged();
+            } else {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar una fila para eliminar.");
+            }
+        }
+    });
+    inputPanel.add(eliminarButton);
+       
        String[] columnNames = {"Grupo", "Eliminar"};
        gruposModel = new DefaultTableModel(columnNames,0);
        gruposTable = new JTable(gruposModel);
+       
        
        addGrupoButton.addActionListener(e ->{
            agregarElemento(grupoField, gruposModel);
@@ -104,6 +154,7 @@ public class ControlNotas extends JFrame {
        JPanel panel = new JPanel(new BorderLayout());
        JPanel inputPanel = new JPanel(new GridLayout(1,3,5,5));
        estudianteCombo = new JComboBox<>();
+       materiaCombo = new JComboBox<>();
        grupoCombo = new JComboBox<>();
        JTextField notaField = new JTextField();
        addNotaButton = new JButton("Agregar Nota");
@@ -112,14 +163,37 @@ public class ControlNotas extends JFrame {
        inputPanel.add(estudianteCombo);
        inputPanel.add(new JLabel("Grupo: "));
        inputPanel.add(grupoCombo);
+       inputPanel.add(new JLabel("Materia: "));
+       inputPanel.add(materiaCombo);
        inputPanel.add(new JLabel("Nota:"));
        inputPanel.add(notaField);
        inputPanel.add(addNotaButton);
        
+      // Agregar botón para eliminar elementos
+    JButton eliminarButton = new JButton("Eliminar");
+    eliminarButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int filaSeleccionada = notasTable.getSelectedRow();
+            if (filaSeleccionada != -1) {
+                notasModel.removeRow(filaSeleccionada);
+                notasModel.fireTableDataChanged();
+            } else {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar una fila para eliminar.");
+            }
+        }
+    });
+    inputPanel.add(eliminarButton);
+       
        String[] columnNames = {"Estudiante","Grupo","Nota","Eliminar"};
        notasModel = new DefaultTableModel(columnNames,0);
        notasTable = new JTable(notasModel);
-   
+       
+        addMateriaButton.addActionListener( e -> {
+           agregarElemento(materiaField,materiasModel);
+           actualizarComboBoxMaterias(materiasModel);
+       });
+       
        addNotaButton.addActionListener(e -> agregarNota(estudianteCombo,grupoCombo,notaField));
        
        panel.add(inputPanel,BorderLayout.NORTH);
@@ -136,6 +210,13 @@ public class ControlNotas extends JFrame {
            JOptionPane.showMessageDialog(this, "Debe ingresar un valor.","Error",JOptionPane.ERROR_MESSAGE);
        }
        
+   }
+   
+   private void actualizarComboBoxMaterias(DefaultTableModel model){
+       materiaCombo.removeAllItems();
+       for (int i = 0; i< model.getRowCount(); i++){
+           materiaCombo.addItem((String)model.getValueAt(i,0));
+       }
    }
    
    private void actualizarComboBox(DefaultTableModel model, JComboBox<String> comboBox){
